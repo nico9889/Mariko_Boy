@@ -1,0 +1,18 @@
+img.bg {
+  image-rendering: auto;
+  image-rendering: crisp-edges;
+  image-rendering: pixelated;
+
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 20%;
+  
+  /* Set up proportionate scaling */
+  width: auto;
+  height: 100%;
+	
+  /* Set up positioning */
+  position: center;
+  top: 0;
+  left: 0;
+}
