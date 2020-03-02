@@ -1,6 +1,6 @@
 # Mariko_Boy
 Nothing to see here, I'm **not** actively mantaining this, I'm just doing experiment in my free time.
-I'm a newbie on this.
+Also I'm a newbie.
 
 # What is this?
 This permit you to play GB/GBC homebrew in non-modified Nintendo Switch through the hidden browser.
