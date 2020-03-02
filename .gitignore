@@ -1,5 +1,7 @@
 
-marikoboy/roms/
+marikoboy/roms/*
+
+!marikoboy/roms/.gitkeep
 
 marikoboy/__pycache__/
 
