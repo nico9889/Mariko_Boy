@@ -9,6 +9,7 @@ class Game(PyBoy):
     fps = 0
     time = 0.0
     rom = None
+    pressed = []
 
     def __init__(self, path, rom):
         if os.path.exists(path + rom):
@@ -18,52 +19,49 @@ class Game(PyBoy):
         else:
             raise IOError
     
-    def get_action(self, data):
-        if data == "INIT":
-            print(" * Client connected.")
-            action = None
-            data = 0
-        elif data == "left_down": # MOVE_LEFT
+    def get_action(self, key, pressed):
+        if key == 14 and pressed: # MOVE_LEFT
             action = WE.PRESS_ARROW_LEFT
-        elif data == "left_up": 
+        elif key == 14 and not pressed: 
             action = WE.RELEASE_ARROW_LEFT
-        elif data == "right_down": # MOVE_RIGHT
+        elif key == 15 and pressed: # MOVE_RIGHT
             action = WE.PRESS_ARROW_RIGHT
-        elif data == "right_up": 
+        elif key == 15 and not pressed: 
             action = WE.RELEASE_ARROW_RIGHT
-        elif data == "up_down": # MOVE_FORWARD
+        elif key == 12 and pressed: # MOVE_FORWARD
             action = WE.PRESS_ARROW_UP
-        elif data == "up_up": 
+        elif key == 12 and not pressed: 
             action = WE.RELEASE_ARROW_UP
-        elif data == "down_down": # MOVE_BACKWARD
+        elif key == 13 and pressed: # MOVE_BACKWARD
             action = WE.PRESS_ARROW_DOWN
-        elif data == "down_up": 
+        elif key == 13 and not pressed: 
             action = WE.RELEASE_ARROW_DOWN
-        elif data == "a_down": # BUTTON A
+        elif key == 1 and pressed: # BUTTON A
             action = WE.PRESS_BUTTON_A
-        elif data == "a_up": 
+        elif key == 1 and not pressed: 
             action = WE.RELEASE_BUTTON_A
-        elif data == "y_down": # BUTTON B
+        elif key == 2 and pressed: # BUTTON B (Y Switch Button)
             action = WE.PRESS_BUTTON_B
-        elif data == "y_up": 
+        elif key == 2 and not pressed: 
             action = WE.RELEASE_BUTTON_B
-        elif data == "sr_down": # START 
+        elif key == 5 and pressed: # START (SR Switch Button)
             action = WE.PRESS_BUTTON_START
-        elif data == "sr_up": 
+        elif key == 5 and not pressed: 
             action = WE.RELEASE_BUTTON_START
-        elif data == "sl_down": # SELECT
+        elif key == 7 and pressed: # SELECT (SL Switch Button)
             action = WE.PRESS_BUTTON_SELECT
-        elif data == "sl_up": 
+        elif key == 7 and not pressed: 
             action = WE.RELEASE_BUTTON_SELECT
         else:
             action = None
         return action
 
-    def update_key(self, key):
-        if key:
-            action = self.get_action(key)
-            if action:
+    def update_key(self, pressed):
+        for button in range(len(pressed)):
+            if not self.pressed or pressed[button]!=self.pressed[button]:  # Updating key only when they change status
+                action = self.get_action(button, pressed[button])
                 self.send_input(action)
+        self.pressed = pressed
 
     def update(self, framerate = 0):
         if framerate:

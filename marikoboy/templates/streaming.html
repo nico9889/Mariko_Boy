@@ -8,13 +8,14 @@
         <script type="text/javascript" src="/static/fullscreen.js"></script> <!-- script that handles switching to fullscreen -->
         <script type="text/javascript" src="/static/frame_update.js"></script> <!-- handles joycon input, updates frames -->
         <script type="text/javascript" src="/static/start.js"></script> <!-- starts the scripts when joycons are connected -->
-    </head>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
 
     <body style="background-color:black;">	
 	<div id=container style="margin:auto;text-align:center;background-color:black">
         <img src="/static/placeholder.jpg" id="image" class="bg"/>
 	</div>
         <script type="text/javascript"> // script that actually toggles the fullscreen script 
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/key_update');
             document.getElementById('container').onclick = function () {
                 document.getElementById("image").src="static/img.jpg?t=" + new Date().getTime();;
 		        fullscreen();

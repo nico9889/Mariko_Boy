@@ -1,12 +1,25 @@
  #!/usr/bin/env python3
 from flask import Flask, request, redirect, url_for, render_template, send_file
-from marikoboy import app
+from marikoboy import app, socketio
 from marikoboy.mariko_boy import Game
 from time import time
 import io
 import os
 
+
 active_game = None
+
+
+# @socketio.on("gamepad_axis", namespace="/key_update")
+# def gamepad_axis(axis):
+#   TODO not necessary right now
+
+
+@socketio.on("gamepad_button", namespace="/key_update")
+def gamepad_button(pressed):
+    if active_game:
+        active_game.update_key(pressed)
+
 
 @app.route("/img.jpg")
 def img():
@@ -21,10 +34,6 @@ def img():
 @app.route("/streaming/", methods=['GET', 'POST'])
 def streaming():
     if active_game:
-        if request.method == "POST":
-            key = request.form["key"]
-            print("Key: " + key)
-            active_game.update_key(key)
         return render_template("streaming.html")
     return redirect(url_for("home"))
 
