@@ -15,11 +15,16 @@
         <img src="/static/placeholder.jpg" id="image" class="bg"/>
 	</div>
         <script type="text/javascript"> // script that actually toggles the fullscreen script 
-            var socket = io.connect('http://' + document.domain + ':' + location.port + '/key_update');
+            var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
             document.getElementById('container').onclick = function () {
-                document.getElementById("image").src="static/img.jpg?t=" + new Date().getTime();;
-		        fullscreen();
+                fullscreen();
+
             };	
+            socket.on("update", function(image) {
+		        if(image){
+			        document.getElementById("image").src= 'data:image/jpeg;base64,' + image.buff;
+		        }
+	        });		
 	    </script> 
     </body>
 

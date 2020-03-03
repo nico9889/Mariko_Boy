@@ -1,39 +1,63 @@
  #!/usr/bin/env python3
 from flask import Flask, request, redirect, url_for, render_template, send_file
 from marikoboy import app, socketio
+from flask_socketio import emit
 from marikoboy.mariko_boy import Game
 from time import time
 import io
 import os
+from base64 import b64encode
 
 
-active_game = None
-
+game = None
 
 # @socketio.on("gamepad_axis", namespace="/key_update")
 # def gamepad_axis(axis):
 #   TODO not necessary right now
 
 
-@socketio.on("gamepad_button", namespace="/key_update")
+@socketio.on('frame', namespace='/game')
+def frame():
+    if game:
+        game.update(framerate=True)
+        if game.frameskip:
+            game.skip = 1 - game.skip
+        if not game.skip:
+            img = io.BytesIO()
+            frame = game.get_frame()
+
+            # Experimental adaptive image quality based on avg framerate
+            # I got this by trial&error
+            # TODO: improve
+            if(game.avg_fps<30):
+                if(game.image_quality>=20): # Limit minimum quality 10%
+                    game.image_quality=game.image_quality-10
+                    game.frameskip = True
+            elif((game.fps) > (game.avg_fps+10) or game.avg_fps>=59):
+                if(game.image_quality<=90): # Limit maximum quality 100%
+                    game.image_quality=game.image_quality+5
+            
+            # Experimental auto-frame skip
+            if game.avg_fps>=59:
+                game.frame_skip = False
+
+            
+            frame.save(img, format="JPEG", optimize=True, progressive=True, subsampling=0, quality=game.image_quality)
+            b64img = str(b64encode(img.getvalue()))[2:]
+            b64img = b64img[:-1]
+            emit('update', {'image': True, 'buff':b64img})
+
+        
+
+@socketio.on("gamepad_button", namespace="/game")
 def gamepad_button(pressed):
-    if active_game:
-        active_game.update_key(pressed)
-
-
-@app.route("/img.jpg")
-def img():
-    # print(str(time()) + " Auto-Frame Update")
-    img = io.BytesIO()
-    frame = active_game.update(framerate=1)
-    frame.save(img, format="JPEG", subsampling=0, quality=100)
-    img.seek(0)
-    return send_file(img, mimetype='image/JPEG')
+    if game and pressed:
+        game.update_key(pressed)
 
 
 @app.route("/streaming/", methods=['GET', 'POST'])
 def streaming():
-    if active_game:
+    if game:
         return render_template("streaming.html")
     return redirect(url_for("home"))
 
@@ -42,13 +66,13 @@ def streaming():
 @app.route("/home")
 def home():
     games = filter(lambda x : x.endswith("gb") or x.endswith("gbc"), os.listdir("marikoboy/roms"))
-    return render_template("home.html", active_game=active_game, games=games)
+    return render_template("home.html", active_game=game, games=games)
 
 
-@app.route("/start/<string:game>", methods=['GET', 'POST'])
-def start(game):
-    global active_game
-    if active_game:
-        active_game.stop()
-    active_game = Game("marikoboy/roms/", game)
+@app.route("/start/<string:rom>", methods=['GET', 'POST'])
+def start(rom):
+    global game
+    if game:
+        game.stop()
+    game = Game("marikoboy/roms/", rom)
     return redirect(url_for("streaming"))

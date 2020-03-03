@@ -52,7 +52,7 @@
                     {% for game in games %}
                     <tr class="table-primary">
                         <th scope="row"></th>
-                        <td><a href={{url_for("start",game=game)}} style="color:white">{{game}}</a></td>
+                        <td><a href={{url_for("start",rom=game)}} style="color:white">{{game}}</a></td>
                         <td></td>
                     </tr>
                     {% endfor %}

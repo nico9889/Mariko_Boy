@@ -2,23 +2,30 @@
 
 import os 
 from time import time
-from pyboy import PyBoy
+from pyboy import PyBoy, logger
 import pyboy.windowevent as WE
+import logging 
+
 
 class Game(PyBoy):
+    avg_fps = 0
     fps = 0
     time = 0.0
+    image_quality = 100 # Experimental
+    skip = 0            # Experimental
+    frameskip = False  # Experimental
     rom = None
-    pressed = []
+
 
     def __init__(self, path, rom):
         if os.path.exists(path + rom):
-            super().__init__(path + rom, window_type="headless")
+            super().__init__(path + rom, window_type="headless", window_scale=1)
             self.time = time()
             self.rom = rom
         else:
             raise IOError
-    
+
+
     def get_action(self, key, pressed):
         if key == 14 and pressed: # MOVE_LEFT
             action = WE.PRESS_ARROW_LEFT
@@ -56,25 +63,30 @@ class Game(PyBoy):
             action = None
         return action
 
+
     def update_key(self, pressed):
         for button in range(len(pressed)):
-            if not self.pressed or pressed[button]!=self.pressed[button]:  # Updating key only when they change status
-                action = self.get_action(button, pressed[button])
+            action = self.get_action(button, pressed[button])
+            if(action):
                 self.send_input(action)
-        self.pressed = pressed
 
-    def update(self, framerate = 0):
-        if framerate:
-            if(time()-self.time<1.0):
-                self.fps = self.fps + 1
-            else:
+
+    def update(self, framerate = False):
+        if(time()-self.time<1.0):
+            self.fps = self.fps + 1
+        else:
+            if framerate:
                 print("FPS: " + str(self.fps))
-                self.time = time()
-                self.fps = 0
-        self.tick()
-        frame = self.get_screen_image().convert("RGB")
-        return frame
+            if self.avg_fps == 0:
+                self.avg_fps = self.fps
+            self.avg_fps = round((self.avg_fps+self.fps)/2)
+            self.time = time()
+            self.fps = 0
 
+        self.tick()
+
+    def get_frame(self):
+        return self.get_screen_image().convert("RGB")
 
     
 
