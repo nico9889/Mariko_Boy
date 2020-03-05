@@ -89,7 +89,7 @@ class Game(PyBoy):
         self.tick()
 
     def get_frame(self):
-        return self.get_screen_image().convert("RGB")
+        return self.get_screen_image()
 
     
 

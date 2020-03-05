@@ -24,7 +24,7 @@ def frame():
             game.skip = 1 - game.skip
         if not game.skip:
             img = io.BytesIO()
-            frame = game.get_frame()
+            frame = game.get_frame().convert("RGB")
 
             # Experimental adaptive image quality based on avg framerate
             # I got this by trial&error
@@ -32,20 +32,19 @@ def frame():
             if(game.avg_fps<30):
                 if(game.image_quality>=20): # Limit minimum quality 10%
                     game.image_quality=game.image_quality-10
-                    game.frameskip = True
+                    game.frameskip = False
             elif((game.fps) > (game.avg_fps+10) or game.avg_fps>=59):
-                if(game.image_quality<=95): # Limit maximum quality 100%
+                if(game.image_quality<=90): # Limit maximum quality 100%
                     game.image_quality=game.image_quality+5
             
             # Experimental auto-frame skip
-            if game.avg_fps>=55:
+            if game.avg_fps>=59:
                 game.frame_skip = False
 
             
             frame.save(img, format="JPEG", optimize=True, progressive=True, subsampling=0, quality=game.image_quality)
-            b64img = str(b64encode(img.getvalue()))[2:]
-            b64img = b64img[:-1]
-            emit('update', {'image': True, 'buff':b64img})
+            
+            emit('update', {'image': True, 'buff':img.getvalue()})
 
         
 

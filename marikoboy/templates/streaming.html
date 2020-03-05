@@ -22,7 +22,8 @@
             };	
             socket.on("update", function(image) {
 		        if(image){
-			        document.getElementById("image").src= 'data:image/jpeg;base64,' + image.buff;
+                    frame = new Blob([image.buff],{type : 'image/jpeg'});
+			        document.getElementById("image").src= URL.createObjectURL(frame);
 		        }
 	        });		
 	    </script> 
