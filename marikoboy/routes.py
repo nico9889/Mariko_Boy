@@ -38,7 +38,7 @@ def frame():
                     game.image_quality=game.image_quality+5
             
             # Experimental auto-frame skip
-            if game.avg_fps>=59:
+            if game.avg_fps>=55:
                 game.frame_skip = False
 
             

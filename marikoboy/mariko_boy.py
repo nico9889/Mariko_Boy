@@ -10,7 +10,10 @@ import logging
 class Game(PyBoy):
     avg_fps = 0
     fps = 0
-    time = 0.0
+    fps_sum = 0
+    fps_time = 0.0
+    start_time = 0.0
+
     image_quality = 100 # Experimental
     skip = 0            # Experimental
     frameskip = False  # Experimental
@@ -20,7 +23,8 @@ class Game(PyBoy):
     def __init__(self, path, rom):
         if os.path.exists(path + rom):
             super().__init__(path + rom, window_type="headless", window_scale=1)
-            self.time = time()
+            self.fps_time = time()
+            self.start_time = time()
             self.rom = rom
         else:
             raise IOError
@@ -72,15 +76,14 @@ class Game(PyBoy):
 
 
     def update(self, framerate = False):
-        if(time()-self.time<1.0):
+        if(time()-self.fps_time<1.0):   # Checking if it's elapsed a second 
             self.fps = self.fps + 1
         else:
             if framerate:
-                print("FPS: " + str(self.fps))
-            if self.avg_fps == 0:
-                self.avg_fps = self.fps
-            self.avg_fps = round((self.avg_fps+self.fps)/2)
-            self.time = time()
+                print("FPS: " + str(self.fps) + " Frameskip: " + str(self.frameskip))
+            self.fps_sum = self.fps_sum + self.fps
+            self.avg_fps = round(self.fps_sum/(time()-self.start_time))
+            self.fps_time = time()
             self.fps = 0
 
         self.tick()
