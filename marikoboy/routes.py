@@ -34,7 +34,7 @@ def frame():
                     game.image_quality=game.image_quality-10
                     game.frameskip = True
             elif((game.fps) > (game.avg_fps+10) or game.avg_fps>=59):
-                if(game.image_quality<=90): # Limit maximum quality 100%
+                if(game.image_quality<=95): # Limit maximum quality 100%
                     game.image_quality=game.image_quality+5
             
             # Experimental auto-frame skip

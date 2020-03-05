@@ -8,15 +8,15 @@ import logging
 
 
 class Game(PyBoy):
-    avg_fps = 0
-    fps = 0
+    avg_fps = 60        # Need to be 60 for the first second so it won't trigger frameskip immediatly
+    fps = 60
     fps_sum = 0
     fps_time = 0.0
     start_time = 0.0
 
     image_quality = 100 # Experimental
     skip = 0            # Experimental
-    frameskip = False  # Experimental
+    frameskip = False   # Experimental
     rom = None
 
 
