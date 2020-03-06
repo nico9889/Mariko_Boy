@@ -6,7 +6,6 @@ from marikoboy.mariko_boy import Game
 from time import time
 import io
 import os
-from base64 import b64encode
 
 
 game = None

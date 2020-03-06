@@ -23,7 +23,7 @@
             socket.on("update", function(image) {
 		        if(image){
                     frame = new Blob([image.buff],{type : 'image/jpeg'});
-			        document.getElementById("image").src= URL.createObjectURL(frame);
+			        document.getElementById("image").src= URL.createObjectURL(frame, {oneTimeOnly: true});
 		        }
 	        });		
 	    </script> 
