@@ -4,7 +4,7 @@ Also I'm a newbie.
 
 ## What is this?
 This permit you to play GB/GBC homebrew in non-modified Nintendo Switch through the hidden browser.
-This is deeply inspired by [z80z80z80's MarikoDoom](https://github.com/z80z80z80/MarikoDoom).
+This ~~is~~ was deeply inspired from [z80z80z80's MarikoDoom](https://github.com/z80z80z80/MarikoDoom).
 
 ## How does this work?
 This is based on [PyBoy Emulator](https://github.com/Baekalfen/PyBoy) and [Flask](https://github.com/pallets/flask). 
