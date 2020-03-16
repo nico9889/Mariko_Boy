@@ -4,11 +4,12 @@
     <head>
         <title>Mariko Boy</title>
         <link rel="stylesheet" type="text/css" href="/static/style.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
         <script type="text/javascript" src="/static/jquery-3.4.1.min.js"></script>
         <script type="text/javascript" src="/static/fullscreen.js"></script> <!-- script that handles switching to fullscreen -->
         <script type="text/javascript" src="/static/frame_update.js"></script> <!-- handles joycon input, updates frames -->
         <script type="text/javascript" src="/static/start.js"></script> <!-- starts the scripts when joycons are connected -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>
+        
 
     <body style="background-color:black;">	
 	<div id=container style="margin:auto;text-align:center;background-color:black">
@@ -16,16 +17,17 @@
 	</div>
         <script type="text/javascript"> // script that actually toggles the fullscreen script 
             var socket = io.connect('http://' + document.domain + ':' + location.port + '/game');
+
             document.getElementById('container').onclick = function () {
                 fullscreen();
-
             };	
+            
             socket.on("update", function(image) {
 		        if(image){
                     frame = new Blob([image.buff],{type : 'image/jpeg'});
 			        document.getElementById("image").src= URL.createObjectURL(frame, {oneTimeOnly: true});
 		        }
-	        });		
+            });	
 	    </script> 
     </body>
 

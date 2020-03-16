@@ -1,36 +1,48 @@
 #!/usr/bin/env python3
 
 import os 
-from time import time
-from pyboy import PyBoy, logger
-import pyboy.windowevent as WE
+from time import time, sleep
+from marikoboy.mgba import core, image
 import logging 
+from threading import Thread
+import numpy as np
 
 
-class Game(PyBoy):
-    avg_fps = 60        # Need to be 60 for the first second so it won't trigger frameskip immediatly
-    fps = 60
-    fps_sum = 0
-    fps_time = 0.0
-    start_time = 0.0
+class Game():
+    c = None 
+    i = None
+    thread = None
+    running = False
 
-    image_quality = 100 # Experimental
+    image_quality = 50 # Experimental
     skip = 0            # Experimental
-    frameskip = False   # Experimental
+    frameskip = True   # Experimental
     rom = None
 
+    def run(self):
+        while self.running:
+            self.c.run_frame()
+            sleep(1/60)
 
     def __init__(self, path, rom):
         if os.path.exists(path + rom):
-            super().__init__(path + rom, window_type="headless", window_scale=1)
+            self.c = core.load_path(path+rom)
+            self.i=image.Image(*self.c.desired_video_dimensions())
+            self.c.set_video_buffer(self.i)
+            self.c.reset()
+            self.thread = Thread(target=self.run)
             self.fps_time = time()
             self.start_time = time()
             self.rom = rom
+            self.running = True
+            self.thread.start()
+            
         else:
             raise IOError
 
-
+    '''
     def get_action(self, key, pressed):
+        
         if key == 14 and pressed: # MOVE_LEFT
             action = WE.PRESS_ARROW_LEFT
         elif key == 14 and not pressed: 
@@ -66,16 +78,20 @@ class Game(PyBoy):
         else:
             action = None
         return action
-
+    '''
 
     def update_key(self, pressed):
+        '''
         for button in range(len(pressed)):
             action = self.get_action(button, pressed[button])
             if(action):
                 self.send_input(action)
+        '''
+        return None
 
 
     def update(self, framerate = False):
+        '''
         if(time()-self.fps_time<1.0):   # Checking if it's elapsed a second 
             self.fps = self.fps + 1
         else:
@@ -85,13 +101,15 @@ class Game(PyBoy):
             self.avg_fps = round(self.fps_sum/(time()-self.start_time))
             self.fps_time = time()
             self.fps = 0
-
-        self.tick()
+        '''
+        self.c.run_frame()
 
     def get_frame(self):
-        return self.get_screen_image()
+        return self.i.to_pil()
 
-    
+    def get_audio(self):
+        return self.c.get_audio_channels().read(44100)
 
-    
-
+    def stop(self):
+        self.c.reset()
+        self.running = False

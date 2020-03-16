@@ -7,7 +7,6 @@ from time import time
 import io
 import os
 
-
 game = None
 
 # @socketio.on("gamepad_axis", namespace="/key_update")
@@ -18,7 +17,6 @@ game = None
 @socketio.on('frame', namespace='/game')
 def frame():
     if game:
-        game.update(framerate=True)
         if game.frameskip:
             game.skip = 1 - game.skip
         if not game.skip:
@@ -42,7 +40,6 @@ def frame():
 
             
             frame.save(img, format="JPEG", optimize=True, progressive=True, subsampling=0, quality=game.image_quality)
-            
             emit('update', {'image': True, 'buff':img.getvalue()})
 
         
@@ -63,7 +60,7 @@ def streaming():
 @app.route("/")
 @app.route("/home")
 def home():
-    games = filter(lambda x : x.endswith("gb") or x.endswith("gbc"), os.listdir("marikoboy/roms"))
+    games = filter(lambda x : x.endswith("gb") or x.endswith("gbc") or x.endswith("gba"), os.listdir("marikoboy/roms"))
     return render_template("home.html", active_game=game, games=games)
 
 
