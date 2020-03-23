@@ -22,27 +22,10 @@ def frame():
         if not game.skip:
             img = io.BytesIO()
             frame = game.get_frame().convert("RGB")
-
-            # Experimental adaptive image quality based on avg framerate
-            # I got this by trial&error
-            # TODO: improve
-            if(game.avg_fps<30):
-                if(game.image_quality>=20): # Limit minimum quality 10%
-                    game.image_quality=game.image_quality-10
-                    game.frameskip = False
-            elif((game.fps) > (game.avg_fps+10) or game.avg_fps>=59):
-                if(game.image_quality<=90): # Limit maximum quality 100%
-                    game.image_quality=game.image_quality+5
-            
-            # Experimental auto-frame skip
-            if game.avg_fps>=59:
-                game.frame_skip = False
-
             
             frame.save(img, format="JPEG", optimize=True, progressive=True, subsampling=0, quality=game.image_quality)
             emit('update', {'image': True, 'buff':img.getvalue()})
 
-        
 
 @socketio.on("gamepad_button", namespace="/game")
 def gamepad_button(pressed):
