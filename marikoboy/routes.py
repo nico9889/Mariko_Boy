@@ -17,14 +17,11 @@ game = None
 @socketio.on('frame', namespace='/game')
 def frame():
     if game:
-        if game.frameskip:
-            game.skip = 1 - game.skip
-        if not game.skip:
-            img = io.BytesIO()
-            frame = game.get_frame().convert("RGB")
-            
-            frame.save(img, format="JPEG", optimize=True, progressive=True, subsampling=0, quality=game.image_quality)
-            emit('update', {'image': True, 'buff':img.getvalue()})
+        img = io.BytesIO()
+        frame = game.get_frame().convert("RGB")
+        
+        frame.save(img, format="JPEG", optimize=True, progressive=True, subsampling=0, quality=game.image_quality)
+        emit('update', {'image': True, 'buff':img.getvalue()})
 
 
 @socketio.on("gamepad_button", namespace="/game")
