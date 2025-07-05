@@ -1,18 +1,12 @@
 const pressed = [];
 
-// Limit execution to 60 fps on if display is 120 Hz
-const fps = 60;
-let previousTimestamp = -(1000 / fps);
 
 function update(timestamp) {
-    if (timestamp - previousTimestamp > 1000 / fps) {
-        socket.emit('frame');
-        previousTimestamp = timestamp;
-    }
+    window.requestAnimationFrame(update);
+    socket.emit('frame');
     if (navigator.getGamepads().length > 0) {
         updateGamepad();
     }
-    window.requestAnimationFrame(update);
 }
 
 
