@@ -35,7 +35,7 @@ class Game(PyBoy):
         rom_path = join(ROMS_PATH, rom)
         if not exists(rom_path):
             raise IOError(f"File {rom_path} does not exist")
-        super().__init__(rom_path, window_type="headless", scale=1)
+        super().__init__(rom_path, window="null", scale=1)
         self.fps_time = time()
         self.start_time = time()
         self.rom = rom
