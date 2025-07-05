@@ -18,9 +18,14 @@ def frame():
     game.update(framerate=True)
     if game.frameskip:
         game.skip = 1 - game.skip
-    if not game.skip:
-        img = BytesIO()
-        frame = game.get_frame().convert("RGB")
+    '''
+    if game.skip:
+        current_app.logger.warning("Skipping frame")
+        return
+    '''
+
+    img = BytesIO()
+    frame = game.get_frame().convert("RGB")
 
         # Experimental adaptive image quality based on avg framerate
         # I got this by trial&error
