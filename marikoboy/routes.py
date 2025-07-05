@@ -18,11 +18,11 @@ def frame():
     game.update(framerate=True)
     if game.frameskip:
         game.skip = 1 - game.skip
-    '''
+
+    # Skip a frame if the client is overwhelmed
     if game.skip:
         current_app.logger.warning("Skipping frame")
         return
-    '''
 
     img = BytesIO()
     frame = game.get_frame().convert("RGB")
@@ -42,7 +42,7 @@ def frame():
     if game.avg_fps >= 59:
         game.frame_skip = False
 
-    frame.save(img, format="JPEG", optimize=True, progressive=True, subsampling=0, quality=game.image_quality)
+    frame.save(img, format="webp", optimize=True, progressive=True, subsampling=0, quality=game.image_quality)
 
     emit('update', {'image': True, 'buff': img.getvalue()})
 
