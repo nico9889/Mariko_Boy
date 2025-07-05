@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from flask import Flask
 from flask_socketio import SocketIO
 from engineio.payload import Payload

@@ -1,5 +1,5 @@
 function fullscreen(){
-    element = $('#container').get(0);
+    let element = $('#container').get(0);
     if (element.requestFullscreen) {
       element.requestFullscreen();
     } else if (element.mozRequestFullScreen) {
