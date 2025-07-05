@@ -2,9 +2,11 @@ let pressed = [];
 
 
 function update() {
-    updateGamepad();
-    socket.emit('frame');
+    if(navigator.getGamepads().length > 0) {
+        updateGamepad();
+    }
 
+    socket.emit('frame');
     window.requestAnimationFrame(update);
 }
 
