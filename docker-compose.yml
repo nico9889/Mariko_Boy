@@ -1,0 +1,17 @@
+services:
+  marikoboy:
+    container_name: marikoboy
+    restart: unless-stopped
+    build:
+      dockerfile: ./Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - MB_ROMS_PATH=/opt/marikoboy/roms
+    volumes:
+      - marikoboy-roms:/opt/marikoboy/roms
+    network_mode: "bridge"
+
+volumes:
+  marikoboy-roms:
+    name: "marikoboy-roms"
