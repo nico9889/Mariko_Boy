@@ -1,4 +1,6 @@
-from flask import redirect, url_for, render_template
+from os import listdir
+
+from flask import redirect, url_for, render_template, current_app
 from flask_socketio import emit
 
 from marikoboy import app, socketio
@@ -57,7 +59,7 @@ def streaming():
 @app.route("/")
 @app.route("/home")
 def home():
-    games = filter(lambda x: x.endswith("gb") or x.endswith("gbc"), ROMS_PATH)
+    games = filter(lambda x: x.endswith("gb") or x.endswith("gbc"), listdir(ROMS_PATH))
     return render_template("home.html", active_game=game, games=games)
 
 
