@@ -15,9 +15,9 @@ from pyboy.utils import WindowEvent as we
 from marikoboy.config import ROMS_PATH
 
 key_map = {
-    14: [we.RELEASE_ARROW_LEFT, we.PRESS_ARROW_LEFT ],
-    15: [we.RELEASE_ARROW_RIGHT, we.PRESS_ARROW_RIGHT ],
-    12: [we.RELEASE_ARROW_UP, we.PRESS_ARROW_UP ],
+    14: [we.RELEASE_ARROW_LEFT, we.PRESS_ARROW_LEFT],
+    15: [we.RELEASE_ARROW_RIGHT, we.PRESS_ARROW_RIGHT],
+    12: [we.RELEASE_ARROW_UP, we.PRESS_ARROW_UP],
     13: [we.RELEASE_ARROW_DOWN, we.PRESS_ARROW_DOWN],
     1: [we.RELEASE_BUTTON_A, we.PRESS_BUTTON_A],
     2: [we.RELEASE_BUTTON_B, we.PRESS_BUTTON_B],  # Switch Y button
@@ -27,15 +27,6 @@ key_map = {
 
 
 class Game(PyBoy):
-    avg_fps = 60  # Need to be 60 for the first second so it won't trigger frameskip immediately
-    fps = 60
-    fps_sum = 0
-    fps_time = 0.0
-    start_time = 0.0
-
-    image_quality = 100  # Experimental
-    skip = 0  # Experimental
-    frameskip = False  # Experimental
     rom = None
 
     def __init__(self, rom: str):
@@ -46,6 +37,16 @@ class Game(PyBoy):
         self.fps_time = time()
         self.start_time = time()
         self.rom = rom
+        self.first_loop = True
+        self.image_quality = 100  # Experimental
+        self.skip = 0  # Experimental
+        self.frameskip = False  # Experimental
+        self.avg_fps = 60  # Need to be 60 for the first second so it won't trigger frameskip immediately
+        self.fps = 60
+        self.max_fps_collection = 30  # keep the last 30 calculated fps value (so 30s)
+        self.fps_index = 0
+        self.fps_time = 0.0
+        self.collected_fps = [60 for _ in range(self.max_fps_collection)]
 
     def update_key(self, buttons: list):
         for button, pressed in enumerate(buttons):
@@ -62,12 +63,17 @@ class Game(PyBoy):
         if time() - self.fps_time < 1.0:  # Checking if it's elapsed a second
             self.fps = self.fps + 1
         else:
+            self.collected_fps[self.fps_index % self.max_fps_collection] = self.fps
+            self.fps_index += 1
             if framerate:
                 current_app.logger.info(f"FPS: {self.fps}\tFrame Skip: {self.frameskip}")
-            self.fps_sum = self.fps_sum + self.fps
-            self.avg_fps = round(self.fps_sum / (time() - self.start_time))
+            if not self.first_loop:
+                self.avg_fps = sum(self.collected_fps) / self.max_fps_collection
+            else:
+                self.avg_fps = sum(self.collected_fps) / self.fps_index
+                self.first_loop = not (self.fps_index < self.max_fps_collection)
             self.fps_time = time()
-            self.fps = 0
+            self.fps = 1
         self.tick()
 
     def get_frame(self) -> Image:
