@@ -18,7 +18,7 @@
     <img src="/static/placeholder.jpg" id="image" class="bg" alt=""/>
 </div>
 <script type="text/javascript"> // script that actually toggles the fullscreen script
-const socket = io.connect('http://' + document.hostname + ':' + location.port + '/game');
+const socket = io.connect(`${location.protocol}//${location.hostname}:${location.port}/game`);
 document.getElementById('container').onclick = function () {
     fullscreen();
 };
