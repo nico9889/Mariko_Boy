@@ -1,3 +1,10 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from PIL import Image
+
 from os.path import exists, join
 from time import time
 
@@ -61,5 +68,5 @@ class Game(PyBoy):
             self.fps = 0
         self.tick()
 
-    def get_frame(self):
-        return self.get_frame()
+    def get_frame(self) -> Image:
+        return super().screen.image
