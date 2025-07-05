@@ -1,7 +1,7 @@
 function fullscreen(){
-    let element = $('#container').get(0);
+    const element = document.getElementById("container");
     if (element.requestFullscreen) {
-      element.requestFullscreen();
+      element.requestFullscreen().then();
     } else if (element.mozRequestFullScreen) {
       element.mozRequestFullScreen();
     } else if (element.webkitRequestFullscreen) {

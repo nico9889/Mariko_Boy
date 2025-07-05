@@ -1,18 +1,23 @@
-let pressed = [];
+const pressed = [];
 
+// Limit execution to 60 fps on if display is 120 Hz
+const fps = 60;
+let previousTimestamp = -(1000 / fps);
 
-function update() {
-    if(navigator.getGamepads().length > 0) {
+function update(timestamp) {
+    if (timestamp - previousTimestamp > 1000 / fps) {
+        socket.emit('frame');
+        previousTimestamp = timestamp;
+    }
+    if (navigator.getGamepads().length > 0) {
         updateGamepad();
     }
-
-    socket.emit('frame');
     window.requestAnimationFrame(update);
 }
 
 
 function updateGamepad() {
-    let gp = navigator.getGamepads()[0];
+    const gp = navigator.getGamepads()[0];
     let new_key = false;
     // window.socket.emit("gamepad_axis", gp.axis) this is not needed
 
@@ -24,8 +29,8 @@ function updateGamepad() {
             }
         }
     } else {
-        for (let i = 0; i < gp.buttons.length; i++) {
-            pressed[i] = gp.buttons[i].pressed;
+        for (const button of gp.buttons) {
+            pressed.push(button.pressed);
         }
         new_key = true;
     }

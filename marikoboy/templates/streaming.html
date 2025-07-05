@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <title>Mariko Boy</title>
-    <link rel="stylesheet" type="text/css" href="/static/style.css">
-    <script type="text/javascript" src="/static/jquery-3.4.1.min.js"></script>
-    <script type="text/javascript" src="/static/fullscreen.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for("static", filename="style.css") }}">
+    <script type="text/javascript" src="{{ url_for("static", filename="fullscreen.js") }}"></script>
     <!-- script that handles switching to fullscreen -->
-    <script type="text/javascript" src="/static/frame_update.js"></script> <!-- handles joycon input, updates frames -->
-    <script type="text/javascript" src="/static/start.js"></script>
+    <script type="text/javascript" src="{{ url_for("static", filename="frame_update.js") }}"></script>
+    <!-- handles joycon input, updates frames -->
+    <script type="text/javascript" src="{{ url_for("static", filename="start.js") }}"></script>
     <!-- starts the scripts when joycons are connected -->
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"
             integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+"
             crossorigin="anonymous"></script>
-<body style="background-color:black;">
-<div id=container style="margin:auto;text-align:center;background-color:black">
-    <img src="/static/placeholder.jpg" id="image" class="bg" alt=""/>
+<body class="black-background">
+<div id=container class="game-container">
+    <img src="{{ url_for("static", filename="placeholder.jpg") }}" id="image" class="bg" alt=""/>
 </div>
 <script type="text/javascript"> // script that actually toggles the fullscreen script
 const socket = io.connect(`${location.protocol}//${location.hostname}:${location.port}/game`);
@@ -24,11 +24,13 @@ document.getElementById('container').onclick = function () {
 };
 socket.on("update", function (image) {
     if (image) {
-        frame = new Blob([image.buff], {type: 'image/jpeg'});
+        let frame = new Blob([image.buff], {type: 'image/jpeg'});
         document.getElementById("image").src = URL.createObjectURL(frame, {oneTimeOnly: true});
     }
 });
 </script>
+<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+
 </body>
 
 </html>
